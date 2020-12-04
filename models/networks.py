@@ -128,18 +128,10 @@ def calc_mean_std_4D(feat, eps=1e-5):
 def adaptive_instance_normalization_4D(content_feat, style_feat): # content_feat is ref feature, style is degradate feature
     # assert (content_feat.size()[:2] == style_feat.size()[:2])
     size = content_feat.size()
-    print(f'\n---------SIZE: {size}')
     style_mean, style_std = calc_mean_std_4D(style_feat)
-    print(f'{style_mean.shape}, {style_std.shape}')
     content_mean, content_std = calc_mean_std_4D(content_feat)
-    print(f'{content_mean.shape}, {content_std.shape}')
     normalized_feat = (content_feat - content_mean.expand(
         size)) / content_std.expand(size)
-    print(f'Norm shape: {normalized_feat.shape}')
-    
-    
-    print(normalized_feat.shape, style_std.shape, style_mean.shape)
-    
     return normalized_feat * style_std + style_mean
 
 def define_G(which_model_netG, gpu_ids=[]):
@@ -514,19 +506,15 @@ class UNetDictFace(nn.Module):
         #     param.requires_grad = False
     
     def forward(self, input, part_locations):
-        print(f'Input shape: {input.shape}')
         VggFeatures = self.VggExtract(input)
-        print(f'VggFeatures shape: {VggFeatures[0].shape}')
         # for b in range(input.size(0)):
         b = 0
         UpdateVggFeatures = []
         for i, f_size in enumerate(self.feature_sizes):
             cur_feature = VggFeatures[i]
-            print(f'Cur_feature shape: {cur_feature.shape}')
 
             update_feature = cur_feature.clone() #* 0
             cur_part_sizes = self.part_sizes // (512/f_size)
-            print(f'cur_part_size: {cur_part_sizes}')
             dicts_feature = getattr(self, 'Dict_'+str(f_size))
             
             LE_Dict_feature = dicts_feature['left_eye'].to(input)
@@ -549,8 +537,6 @@ class UNetDictFace(nn.Module):
             RE_feature_resize = F.interpolate(RE_feature,(RE_Dict_feature.size(2),RE_Dict_feature.size(3)),mode='bilinear',align_corners=False)
             NO_feature_resize = F.interpolate(NO_feature,(NO_Dict_feature.size(2),NO_Dict_feature.size(3)),mode='bilinear',align_corners=False)
             MO_feature_resize = F.interpolate(MO_feature,(MO_Dict_feature.size(2),MO_Dict_feature.size(3)),mode='bilinear',align_corners=False)
-            
-            print(LE_Dict_feature.shape, LE_feature_resize.shape, LE_feature.shape)
             
             LE_Dict_feature_norm = adaptive_instance_normalization_4D(LE_Dict_feature, LE_feature_resize)
             RE_Dict_feature_norm = adaptive_instance_normalization_4D(RE_Dict_feature, RE_feature_resize)

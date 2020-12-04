@@ -20,7 +20,7 @@ class AlignedDataset(Dataset):
         self.pathes = [os.path.join(self.root_dir, x) for x in os.listdir(self.root_dir) if x[-3:] == 'png']
         self.transform = transform
         self.fine_size = fine_size
-        self.partpath = 'landmarks'
+        self.partpath = 'dataset/landmarks'
         
     def AddNoise(self,img): # noise
         if random.random() > 0.9: #
