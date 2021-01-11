@@ -1,6 +1,7 @@
 # ResNet generator and discriminator
 from torch import nn
 import torch.nn.functional as F
+import torch 
 
 from spect_norm import SpectralNorm
 import numpy as np
@@ -148,11 +149,15 @@ class Discriminator(nn.Module):
                 nn.AvgPool2d(8),
             )
         self.fc = nn.Linear(DISC_SIZE, 1)
-        nn.init.xavier_uniform(self.fc.weight.data, 1.)
-        self.fc = SpectralNorm(self.fc)
+#         nn.init.xavier_uniform(self.fc.weight.data, 1.)
+#         self.fc = SpectralNorm(self.fc)
 
     def forward(self, x):
-        return self.fc(self.model(x).view(-1,DISC_SIZE))
+        x = self.model(x)
+        x = x.view(-1,DISC_SIZE)
+        x = self.fc(x)
+        x = torch.sum(x)
+        return nn.Sigmoid()(x)
     
     
     
@@ -175,5 +180,5 @@ class MultiScaleDiscriminator(nn.Module):
         for scale, disc in self.discs.items():
             scale = str(scale).replace('-', '.')
             key = 'prediction_' + scale
-            out_dict['prediction_' + scale] = disc(x[key])
+            out_dict['prediction_' + scale] = disc(x[scale])
         return out_dict

@@ -1,0 +1,8 @@
+dataset_celeba/ 
+*.ipynb 
+weights/ 
+test_dataset/ 
+run.sh 
+__pycache__/ 
+DictionaryCenter512/ 
+runs/

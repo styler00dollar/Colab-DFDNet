@@ -13,16 +13,18 @@ from tqdm import tqdm
 
 
 if __name__ == '__main__':
-    images = os.listdir('ffhq')
-    SaveLandmarkPath = os.path.join('landmarks')
+    images = os.listdir('test_dataset/images')
+    SaveLandmarkPath = os.path.join('test_dataset/landmarks')
     FD = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, device='cuda:0', flip_input=False)
 
     for i,img_path in enumerate(tqdm(images)):
         if img_path[-3:] != 'png':
             continue
         img_name = os.path.split(img_path)[-1]
-#         print('Detecting {}'.format(img_name))
-        img = io.imread(os.path.join('ffhq', img_path))
+        try:
+            img = io.imread(os.path.join('test_dataset/images', img_path))
+        except:
+            continue
         try:
             PredsAll = FD.get_landmarks(img)
         except:

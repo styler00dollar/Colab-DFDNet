@@ -17,10 +17,10 @@ class AlignedDataset(Dataset):
     
     def __init__(self, root_dir, fine_size=512, transform=None):
         self.root_dir = root_dir
-        self.pathes = [os.path.join(self.root_dir, x) for x in os.listdir(self.root_dir) if x[-3:] == 'png']
+        self.pathes = [os.path.join(self.root_dir, x) for x in os.listdir(self.root_dir) if x[-3:] == 'jpg']
         self.transform = transform
         self.fine_size = fine_size
-        self.partpath = 'dataset/landmarks'
+        self.partpath = 'dataset_celeba/landmarks'
         
     def AddNoise(self,img): # noise
         if random.random() > 0.9: #
@@ -77,7 +77,7 @@ class AlignedDataset(Dataset):
         A = Imgs.resize((self.fine_size, self.fine_size))
         A = transforms.ColorJitter(0.3, 0.3, 0.3, 0)(A)
         C = A
-        A = self.AddUpSample(self.AddJPEG(self.AddNoise(self.AddDownSample(self.AddBlur(A)))))
+        A = self.AddBlur(A)
         
         tmps = path.split('/')
         ImgName = tmps[-1]

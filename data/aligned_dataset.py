@@ -11,8 +11,10 @@ import cv2
 import math
 from util import util
 from scipy.io import loadmat
-from PIL import Image
+from PIL import Image, ImageFile
 import PIL
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class AlignedDataset(BaseDataset):
@@ -21,10 +23,11 @@ class AlignedDataset(BaseDataset):
         return parser
 
     def initialize(self, opt):
+        ImageFile.LOAD_TRUNCATED_IMAGES = True
         pass
 #         self.opt = opt
 #         self.root = opt.dataroot
-#         self.partpath = opt.partroot
+        self.partpath = 'dataset_celeba/landmarks'
 #         self.dir_AB = os.path.join(opt.dataroot, opt.phase)
 #         self.AB_paths = sorted(make_dataset(self.dir_AB))
 #         self.is_real = opt.is_real
@@ -34,7 +37,7 @@ class AlignedDataset(BaseDataset):
     def AddNoise(self,img): # noise
         if random.random() > 0.9: #
             return img
-        self.sigma = np.random.randint(1, 11)
+        self.sigma = np.random.randint(1, 4)
         img_tensor = torch.from_numpy(np.array(img)).float()
         noise = torch.randn(img_tensor.size()).mul_(self.sigma/1.0)
 
@@ -61,14 +64,14 @@ class AlignedDataset(BaseDataset):
     def AddDownSample(self,img): # downsampling
         if random.random() > 0.95: #
             return img
-        sampler = random.randint(20, 100)*1.0
+        sampler = random.randint(20, 60)*1.0
         img = img.resize((int(self.opt.fineSize/sampler*10.0), int(self.opt.fineSize/sampler*10.0)), Image.BICUBIC)
         return img
 
     def AddJPEG(self,img): # JPEG compression
         if random.random() > 0.6: #
             return img
-        imQ = random.randint(40, 80)
+        imQ = random.randint(20, 50)
         img = np.array(img)
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY),imQ] # (0,100),higher is better,default is 95
         _, encA = cv2.imencode('.jpg',img,encode_param)
@@ -84,9 +87,9 @@ class AlignedDataset(BaseDataset):
         Imgs = Image.open(AB_path).convert('RGB')
         # # 
         A = Imgs.resize((self.opt.fineSize, self.opt.fineSize))
-        A = transforms.ColorJitter(0.3, 0.3, 0.3, 0)(A)
+#         A = transforms.ColorJitter(0.3, 0.3, 0.3, 0)(A)
         C = A
-        A = self.AddUpSample(self.AddJPEG(self.AddNoise(self.AddDownSample(self.AddBlur(A)))))
+        A = self.AddBlur(A)
 
         tmps = AB_path.split('/')
         ImgName = tmps[-1]
