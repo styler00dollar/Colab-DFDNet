@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torchvision
 #from . import block as B
+from block import conv_block
 from torch.nn.utils import spectral_norm as SN
 import pytorch_lightning as pl
 
