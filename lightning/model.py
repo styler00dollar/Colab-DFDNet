@@ -11,6 +11,7 @@ from torchvision import models
 import numpy as np
 #import scipy.ndimage
 import torch.nn.utils.spectral_norm as SpectralNorm
+#from spectral_norm import SpectralNorm
 
 from torch.autograd import Function
 from math import sqrt
@@ -20,6 +21,7 @@ import math
 
 import pytorch_lightning as pl
 
+from functions import *
 
 class VGGFeat(pl.LightningModule):
     """

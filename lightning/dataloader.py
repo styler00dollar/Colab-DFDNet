@@ -1,6 +1,7 @@
 from torchvision import transforms
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
+from data import *
 
 class DFNetDataModule(pl.LightningDataModule):
     def __init__(self, training_path: str = './', train_partpath: str = './', validation_path: str = './', val_partpath: str = './', test_path: str = './', batch_size: int = 5, num_workers: int = 2):

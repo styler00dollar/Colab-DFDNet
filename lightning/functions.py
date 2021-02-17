@@ -1,4 +1,10 @@
 import pytorch_lightning as pl
+from torch.autograd import Function
+import torch
+import torch.nn as nn
+#from spectral_norm import SpectralNorm
+import torch.nn.utils.spectral_norm as SpectralNorm
+import torch.nn.functional as F
 
 def compute_sum(x, axis=None, keepdim=False):
     if not axis:

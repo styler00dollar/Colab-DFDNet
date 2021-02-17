@@ -1,7 +1,10 @@
-from torch.autograd import Variable
-
+from model_check import UNetDictFace
+import torch
 import pytorch_lightning as pl
 from torchvision.utils import save_image
+
+from init import weights_init
+import os
 
 class CustomTrainClass(pl.LightningModule):
   def __init__(self):
