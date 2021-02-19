@@ -16,6 +16,7 @@ from tensorboardX import SummaryWriter
 logdir='/content/logs/'
 writer = SummaryWriter(logdir=logdir)
 
+
 class CustomTrainClass(pl.LightningModule):
   def __init__(self):
     super().__init__()
@@ -110,6 +111,13 @@ class CustomTrainClass(pl.LightningModule):
       # generator training
       out = self.netG(train_batch[0], part_locations=train_batch[3])
 
+      # range [-1, 1] to [0, 1]
+      out = out + 1
+      out = out - out.min()
+      out = out / (out.max() - out.min())
+
+
+
       ############################
       # loss calculation
       total_loss = 0
@@ -188,6 +196,12 @@ class CustomTrainClass(pl.LightningModule):
     # train_batch[1] = path
     # train_batch[2] = part_locations
     out = self.netG(train_batch[0], part_locations=train_batch[2])
+
+    # range [-1, 1] to [0, 1]
+    out = out + 1
+    out = out - out.min()
+    out = out / (out.max() - out.min())
+
 
     """
     # metrics
